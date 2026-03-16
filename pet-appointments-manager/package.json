@@ -1,0 +1,29 @@
+{
+  "name": "pet-appointments-manager",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de citas para cuidado de mascotas - Práctica de Prototipado Rápido",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "appointments",
+    "pets",
+    "rapid-prototyping",
+    "javascript",
+    "localStorage",
+    "spa",
+    "progressive-web-app"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/pet-appointments-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tu-usuario/pet-appointments-manager/issues"
+  },
+  "homepage": "https://github.com/tu-usuario/pet-appointments-manager#readme"
+}

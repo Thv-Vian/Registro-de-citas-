@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Citas para Cuidado de Mascotas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .toggle-form a {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Estilos para la sección de citas */
+        .appointments-section {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .appointments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .appointments-header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .btn-logout:hover {
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .appointments-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .appointment-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .appointment-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .appointment-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .appointment-image {
+            margin-top: 15px;
+        }
+
+        .appointment-image img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            border-radius: 5px;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .btn-edit:hover {
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-delete:hover {
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .close {
+            color: #999;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            .appointments-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .appointments-header h2 {
+                font-size: 20px;
+            }
+        }
+
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sección de Registro e Inicio de Sesión -->
+    <div id="authSection" class="container">
+        <!-- Formulario de Registro -->
+        <div id="registerForm">
+            <div class="header">
+                <h1>🐾 Cuidado de Mascotas</h1>
+                <p>Crea una cuenta para registrar citas</p>
+            </div>
+
+            <div class="error-message" id="registerError"></div>
+            <div class="success-message" id="registerSuccess"></div>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Nombre</label>
+                    <input type="text" id="registerName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Correo electrónico</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Contraseña</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirm">Confirmar contraseña</label>
+                    <input type="password" id="registerConfirm" required>
+                </div>
+
+                <button type="submit">Registrarse</button>
+            </form>
+
+            <div class="toggle-form">
+                ¿Ya tienes cuenta? <a onclick="toggleForms()">Inicia sesión aquí</a>
+            </div>
+        </div>
+
+        <!-- Formulario de Inicio de Sesión -->
+        <div id="loginForm" class="hidden">
+            <div class="header">
+                <h1>🐾 Cuidado de Mascotas</h1>
+                <p>Inicia sesión para continuar</p>
+            </div>
+
+            <div class="error-message" id="loginError"></div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Correo electrónico</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+
+                <button type="submit">Iniciar sesión</button>
+            </form>
+
+            <div class="toggle-form">
+                ¿No tienes cuenta? <a onclick="toggleForms()">Regístrate aquí</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Citas -->
+    <div id="appointmentsSection" class="hidden appointments-section">
+        <div class="appointments-header">
+            <h2>Mis citas de cuidado de mascotas</h2>
+            <button class="btn-logout" onclick="handleLogout()">Cerrar sesión</button>
+        </div>
+
+        <div class="form-section">
+            <h3>Registrar nueva cita</h3>
+            
+            <div class="error-message" id="appointmentError"></div>
+            <div class="success-message" id="appointmentSuccess"></div>
+
+            <form onsubmit="handleAddAppointment(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="petName">Nombre de la mascota</label>
+                        <input type="text" id="petName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ownerName">Nombre del dueño</label>
+                        <input type="text" id="ownerName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="petSpecifications">Especificaciones de la mascota</label>
+                    <textarea id="petSpecifications" rows="3" placeholder="Ej: Pequeña, pelaje blanco, muy activa"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="petAge">Edad de la mascota</label>
+                        <input type="number" id="petAge" min="0" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="petBreed">Raza</label>
+                        <input type="text" id="petBreed" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dropoffTime">Hora de entrega</label>
+                        <input type="datetime-local" id="dropoffTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pickupTime">Hora de recogida</label>
+                        <input type="datetime-local" id="pickupTime" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="petImage">Subir imagen de la mascota</label>
+                    <input type="file" id="petImage" accept="image/*">
+                </div>
+
+                <button type="submit">Registrar cita</button>
+            </form>
+        </div>
+
+        <div class="form-section">
+            <h3>Mis citas</h3>
+            <div id="appointmentsList" class="appointments-list">
+                <div class="empty-state">
+                    <p>No hay citas registradas. ¡Crea una nueva!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar cita -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h3>Editar hora de la cita</h3>
+            
+            <form onsubmit="handleSaveEdit(event)">
+                <div class="form-group">
+                    <label for="editDropoffTime">Nueva hora de entrega</label>
+                    <input type="datetime-local" id="editDropoffTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPickupTime">Nueva hora de recogida</label>
+                    <input type="datetime-local" id="editPickupTime" required>
+                </div>
+
+                <button type="submit">Guardar cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
